@@ -2,31 +2,18 @@
 
 var canvas = document.getElementById("canvas");
 
-var TWO_PI = Math.PI*2;
-  const mobile = ( navigator.userAgent.match(/Android/i)
-      || navigator.userAgent.match(/webOS/i)
-      || navigator.userAgent.match(/iPhone/i)
-      //|| navigator.userAgent.match(/iPad/i)
-      || navigator.userAgent.match(/iPod/i)
-      || navigator.userAgent.match(/BlackBerry/i)
-      || navigator.userAgent.match(/Windows Phone/i)
-      );
+var TWO_PI = Math.PI * 2;
 
 //Spatial variables
 var width = 2000;
 var height = 2000;
 var depth = 2000;
-var centre = [width/2,height/2, depth/2];
+var centre = [width / 2, height / 2, depth / 2];
 
 var flakes = [];
 
-var flakeCount;
 
-if(mobile){
-  flakeCount = 2000;
-}else{
-  flakeCount = 2500;
-}
+const flakeCount = 2500;
 
 //Speed of falling
 var fall = 2;
@@ -40,37 +27,41 @@ var rotate = true;
 //Initialise three.js
 var scene = new THREE.Scene();
 
-var renderer = new THREE.WebGLRenderer({antialias: true, canvas: canvas});
-renderer.setSize( window.innerWidth, window.innerHeight );
+var renderer = new THREE.WebGLRenderer({
+  antialias: true,
+  canvas: canvas
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
 
 distance = 400;
 
-var FOV = 2 * Math.atan( window.innerHeight / ( 2 * distance ) ) * 90 / Math.PI;
+var FOV = 2 * Math.atan(window.innerHeight / (2 * distance)) * 90 / Math.PI;
 
 var camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 1, 20000);
 
-camera.up.set(0,0,1);
-camera.position.set(width/2, -height/2, 500);
+camera.up.set(0, 0, 1);
+camera.position.set(width / 2, -height / 2, 500);
 camera.lookAt(new THREE.Vector3(centre[0], centre[1], centre[2]));
 
 scene.add(camera);
-window.addEventListener( 'resize', onWindowResize, false );
-function onWindowResize(){
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
 
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-	renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 //OrbitControls.js for camera manipulation
-controls = new THREE.OrbitControls( camera, renderer.domElement );
-controls.maxDistance = 2*width;
-controls.minDistance = width/2;
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxDistance = 2 * width;
+controls.minDistance = width / 2;
 controls.autoRotate = rotate;
 
 //Lights
 var light_1;
-light_1 = new THREE.HemisphereLight( 0x114417, 0xffffff, 0.3);
+light_1 = new THREE.HemisphereLight(0x114417, 0xffffff, 0.3);
 light_1.position.set(0, 0, -depth);
 light_1.lookAt(0, 0, -1);
 scene.add(light_1);
@@ -88,35 +79,37 @@ light_4.position.set(1, -1, 1);
 scene.add(light_4);
 
 //Material for dancer and base
-var material_d = new THREE.MeshLambertMaterial( { color: 0xffffff} );
+var material_d = new THREE.MeshLambertMaterial({
+  color: 0xffffff
+});
 
 var loader = new THREE.STLLoader();
 //Load dancer
-loader.load( "../model/ballerina.stl", function (geometry) {
+loader.load("../model/ballerina.stl", function (geometry) {
 
-  var mesh = new THREE.Mesh( geometry, material_d);
+  var mesh = new THREE.Mesh(geometry, material_d);
   let scale = 90;
   // mesh.rotation.x = Math.PI / 2;
 
-  mesh.scale.set( scale, scale, scale );
-  mesh.position.set( -20, -30, -400 );
-  
+  mesh.scale.set(scale, scale, scale);
+  mesh.position.set(-20, -30, -400);
 
-  scene.add( mesh );
 
-} );
+  scene.add(mesh);
+
+});
 
 //Load base
-loader.load( "../model/base.stl", function (geometry) {
+loader.load("../model/base.stl", function (geometry) {
 
-  var mesh = new THREE.Mesh( geometry, material_d);
+  var mesh = new THREE.Mesh(geometry, material_d);
 
-  mesh.scale.set( depth/2, depth/2, depth/2 );
+  mesh.scale.set(depth / 2, depth / 2, depth / 2);
   mesh.position.set(-725, -725, -850);
 
-  scene.add( mesh );
+  scene.add(mesh);
 
-} );
+});
 
 //Define hexagon shape for flakes
 var geom = new THREE.Geometry();
@@ -124,29 +117,35 @@ var geom = new THREE.Geometry();
 //Brackets for purely aesthetic considerations
 {
   geom.vertices.push(
-      new THREE.Vector3(   -0.5,  0.86, 0 ),
-      new THREE.Vector3(    0.5,  0.86, 0 ),
-      new THREE.Vector3(    0.93, 0.0,  0 ),
-      new THREE.Vector3(    0.5, -0.86, 0 ),
-      new THREE.Vector3(   -0.5, -0.86, 0 ),
-      new THREE.Vector3(   -0.93, 0.0, 0 )
-      );
+    new THREE.Vector3(-0.5, 0.86, 0),
+    new THREE.Vector3(0.5, 0.86, 0),
+    new THREE.Vector3(0.93, 0.0, 0),
+    new THREE.Vector3(0.5, -0.86, 0),
+    new THREE.Vector3(-0.5, -0.86, 0),
+    new THREE.Vector3(-0.93, 0.0, 0)
+  );
 }
 
-geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-geom.faces.push( new THREE.Face3( 0, 2, 3 ) );
-geom.faces.push( new THREE.Face3( 0, 3, 4 ) );
-geom.faces.push( new THREE.Face3( 0, 4, 5 ) );
+geom.faces.push(new THREE.Face3(0, 1, 2));
+geom.faces.push(new THREE.Face3(0, 2, 3));
+geom.faces.push(new THREE.Face3(0, 3, 4));
+geom.faces.push(new THREE.Face3(0, 4, 5));
 
-geom.scale(7,7,7);
+geom.scale(7, 7, 7);
 
-var colour = 0x939393;
+var colour = 0xffb3d9;
 
-var material = new THREE.MeshPhongMaterial( {color: colour, specular: 0xffffff, shininess: 100, side: THREE.DoubleSide, shading: THREE.FlatShading} );
+var material = new THREE.MeshPhongMaterial({
+  color: colour,
+  specular: 0xffffff,
+  shininess: 100,
+  side: THREE.DoubleSide,
+  shading: THREE.FlatShading
+});
 
 
 //Generate random flakes
-for(i = 0; i < flakeCount; i++){
+for (i = 0; i < flakeCount; i++) {
 
   var g_ = new THREE.Mesh(geom, material);
 
@@ -161,10 +160,10 @@ for(i = 0; i < flakeCount; i++){
     geo: g_
   };
 
-  flake.geo.position.x = width/2 - Math.random() * width;
-  flake.geo.position.y = height/2 - Math.random() * height;
-  flake.geo.position.z = depth/2 - Math.random() * depth;
-  
+  flake.geo.position.x = width / 2 - Math.random() * width;
+  flake.geo.position.y = height / 2 - Math.random() * height;
+  flake.geo.position.z = depth / 2 - Math.random() * depth;
+
   flake.geo.rotation.x = 2 * (Math.random() - 1.0);
   flake.geo.rotation.y = 2 * (Math.random() - 1.0);
   flake.geo.rotation.z = 2 * (Math.random() - 1.0);
@@ -172,14 +171,14 @@ for(i = 0; i < flakeCount; i++){
   flakes.push(flake);
 }
 
-for(i = 0; i < flakes.length; i++){
+for (i = 0; i < flakes.length; i++) {
   scene.add(flakes[i].geo);
 }
 
 
 
 
-function setColour(){
+function setColour() {
   material.color.setHex(colour);
 }
 
@@ -205,7 +204,7 @@ var n = {
 };;
 
 //cross product
-function cross(A, B, n){
+function cross(A, B, n) {
   n.x = A.y * B.z - B.y * A.z;
   n.y = A.z * B.x - B.z * A.x;
   n.z = A.x * B.y - B.x * A.y;
@@ -217,56 +216,55 @@ var noise_ = [];
 //Use noise.js library to generate a grid of 3D simplex noise values
 try {
   noise.seed(Math.random());
-}
-catch(err) {
+} catch (err) {
   console.log(err.message);
 }
 
 //Find the curl of the noise field based on on the noise value at the location of a flake
-function computeCurl(x, y, z){
+function computeCurl(x, y, z) {
   var eps = 0.0001;
 
   var curl = new THREE.Vector3();
 
   //Find rate of change in YZ plane
-  var n1 = noise.simplex3(x, y + eps, z); 
-  var n2 = noise.simplex3(x, y - eps, z); 
+  var n1 = noise.simplex3(x, y + eps, z);
+  var n2 = noise.simplex3(x, y - eps, z);
   //Average to find approximate derivative
-  var a = (n1 - n2)/(2 * eps);
-  var n1 = noise.simplex3(x, y, z + eps); 
-  var n2 = noise.simplex3(x, y, z - eps); 
+  var a = (n1 - n2) / (2 * eps);
+  var n1 = noise.simplex3(x, y, z + eps);
+  var n2 = noise.simplex3(x, y, z - eps);
   //Average to find approximate derivative
-  var b = (n1 - n2)/(2 * eps);
+  var b = (n1 - n2) / (2 * eps);
   curl.x = a - b;
 
   //Find rate of change in XZ plane
-  n1 = noise.simplex3(x, y, z + eps); 
-  n2 = noise.simplex3(x, y, z - eps); 
+  n1 = noise.simplex3(x, y, z + eps);
+  n2 = noise.simplex3(x, y, z - eps);
   //Average to find approximate derivative
-  a = (n1 - n2)/(2 * eps);
-  n1 = noise.simplex3(x + eps, y, z); 
-  n2 = noise.simplex3(x + eps, y, z); 
+  a = (n1 - n2) / (2 * eps);
+  n1 = noise.simplex3(x + eps, y, z);
+  n2 = noise.simplex3(x + eps, y, z);
   //Average to find approximate derivative
-  b = (n1 - n2)/(2 * eps);
+  b = (n1 - n2) / (2 * eps);
   curl.y = a - b;
 
   //Find rate of change in XY plane
-  n1 = noise.simplex3(x + eps, y, z); 
-  n2 = noise.simplex3(x - eps, y, z); 
+  n1 = noise.simplex3(x + eps, y, z);
+  n2 = noise.simplex3(x - eps, y, z);
   //Average to find approximate derivative
-  a = (n1 - n2)/(2 * eps);
-  n1 = noise.simplex3(x, y + eps, z); 
-  n2 = noise.simplex3(x, y - eps, z); 
+  a = (n1 - n2) / (2 * eps);
+  n1 = noise.simplex3(x, y + eps, z);
+  n2 = noise.simplex3(x, y - eps, z);
   //Average to find approximate derivative
-  b = (n1 - n2)/(2 * eps);
+  b = (n1 - n2) / (2 * eps);
   curl.z = a - b;
 
   return curl;
 }
 
 //----------MOVE----------//
-function move(){
-  for(i = 0; i < flakeCount; i++){
+function move() {
+  for (i = 0; i < flakeCount; i++) {
 
     A.x = flakes[i].geo.position.x;
     A.y = flakes[i].geo.position.y;
@@ -274,54 +272,54 @@ function move(){
 
     cross(A, B, n);
     var mag_n = Math.sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
-    flakes[i].vel_x = swirl * (n.x/mag_n);
-    flakes[i].vel_y = swirl * (n.y/mag_n);
+    flakes[i].vel_x = swirl * (n.x / mag_n);
+    flakes[i].vel_y = swirl * (n.y / mag_n);
 
-    var curl = computeCurl(flakes[i].geo.position.x/step, flakes[i].geo.position.y/step, flakes[i].geo.position.z/step);
+    var curl = computeCurl(flakes[i].geo.position.x / step, flakes[i].geo.position.y / step, flakes[i].geo.position.z / step);
     var mag_c = Math.sqrt(curl.x * curl.x + curl.y * curl.y + curl.z * curl.z);
 
     //Update flake velocity according to curl direction and fall
-    flakes[i].vel_x -= (fall/4)*(curl.x/mag_c);
-    flakes[i].vel_y -= (fall/4)*(curl.y/mag_c);
+    flakes[i].vel_x -= (fall / 4) * (curl.x / mag_c);
+    flakes[i].vel_y -= (fall / 4) * (curl.y / mag_c);
 
-    if(fall > 0){
-      flakes[i].vel_z -= (fall/60);
+    if (fall > 0) {
+      flakes[i].vel_z -= (fall / 60);
       flakes[i].vel_z = Math.max(flakes[i].vel_z, -fall);
-    }else{
+    } else {
       flakes[i].vel_z = 0;
     }
 
-    flakes[i].geo.rotation.x += flakes[i].vel_x/10+flakes[i].vel_z/60;
-    flakes[i].geo.rotation.y += flakes[i].vel_y/10+flakes[i].vel_z/60;
+    flakes[i].geo.rotation.x += flakes[i].vel_x / 10 + flakes[i].vel_z / 60;
+    flakes[i].geo.rotation.y += flakes[i].vel_y / 10 + flakes[i].vel_z / 60;
 
-    var distanceFromCentre = Math.sqrt(A.x * A.x + A.y * A.y + A.z * A.z);  
-    if(distanceFromCentre > width/2){
+    var distanceFromCentre = Math.sqrt(A.x * A.x + A.y * A.y + A.z * A.z);
+    if (distanceFromCentre > width / 2) {
       flakes[i].geo.visible = false;
-    }else{
+    } else {
       flakes[i].geo.visible = true;
     }
 
 
-    if(flakes[i].geo.position.z < -(depth/2) || Math.sqrt(A.x * A.x + A.y * A.y) > width){
+    if (flakes[i].geo.position.z < -(depth / 2) || Math.sqrt(A.x * A.x + A.y * A.y) > width) {
       //If outside bounding volume, reset to top
-      flakes[i].geo.position.x = width/2 - Math.random() * width; 
-      flakes[i].geo.position.y = height/2 - Math.random() * height; 
-      flakes[i].geo.position.z = depth/2; 
+      flakes[i].geo.position.x = width / 2 - Math.random() * width;
+      flakes[i].geo.position.y = height / 2 - Math.random() * height;
+      flakes[i].geo.position.z = depth / 2;
       flakes[i].vel_x = 0;
       flakes[i].vel_y = 0;
 
-    }else{
+    } else {
       //Update flake position based on velocity
-      flakes[i].geo.position.x += flakes[i].vel_x ;
-      flakes[i].geo.position.y += flakes[i].vel_y ;
-      flakes[i].geo.position.z += flakes[i].vel_z ;
+      flakes[i].geo.position.x += flakes[i].vel_x;
+      flakes[i].geo.position.y += flakes[i].vel_y;
+      flakes[i].geo.position.z += flakes[i].vel_z;
     }
   }
 }
 
 //----------DRAW----------//
-function draw(){
-  if(rotate){
+function draw() {
+  if (rotate) {
     controls.update();
   }
   move();
