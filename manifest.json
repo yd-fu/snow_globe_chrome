@@ -1,0 +1,19 @@
+{
+  "name": "Snow Globe",
+  "version": "1.0",
+  "description": "Beautiful Snow globe",
+  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "browser_action":{
+    "default_icon": "images/snow-globe-icon.png"
+  },
+  "chrome_url_overrides" : {
+    "newtab": "index.html"
+  },
+  "icons": {
+    "16": "images/snow-globe-icon.png",
+    "32": "images/snow-globe-icon.png",
+    "48": "images/snow-globe-icon.png",
+    "128": "images/snow-globe-icon.png"
+  },
+  "manifest_version": 2
+}
